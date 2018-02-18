@@ -27,6 +27,8 @@ class DMS:
         self.tasks_to_run = set([])
         self.current_power = 0
         self.max_power = max_power
+        self.power_history = []
+
 
     def start(self):
         self.executing_tasks()
@@ -121,3 +123,31 @@ class DMS:
         self.tasks_to_run = self.tasks_to_run.difference(finished_tasks)
         self.release_potential_power()
         self.check_queue()
+        self.power_history.append(self.current_power)
+
+    def get_power_history(self):
+        return self.power_history
+
+    def get_device_stats(self):
+        counter = dict({
+            "non-switchable devices": 0,
+            "shiftable devices": 0,
+            "thermal devices": 0,
+            "interruptible devices": 0
+        })
+
+        for house in self.village.houses:
+            for flat in house.flats:
+                for socket in flat.sockets:
+                    if not socket.is_on:
+                        continue
+
+                    if isinstance(socket.device, InterruptibleDevice):
+                        counter['interruptible devices'] += 1
+                    elif isinstance(socket.device, ShiftableDevice):
+                        counter['shiftable devices'] += 1
+                    elif isinstance(socket.device, ThermalDevice):
+                        counter['thermal devices'] += 1
+                    elif isinstance(socket.device, NonSwitchableDevice):
+                        counter['non-switchable devices'] += 1
+        return counter

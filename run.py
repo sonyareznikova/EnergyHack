@@ -4,7 +4,7 @@ from devices import *
 from etc import *
 from running_support import *
 
-dms = DMS(30)
+dms = DMS(50)
 village = Village(dms)
 dms.village = village
 dms.start()
@@ -45,4 +45,3 @@ kettle_socket_3.start_by_user()
 lamp_socket.switch_off()
 
 
-f = 4

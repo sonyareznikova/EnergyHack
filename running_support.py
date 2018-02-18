@@ -75,7 +75,7 @@ def create_n_shiftable_devices(n, base_title, power, sockets):
             break
     print("Added {} non shiftable devices".format(added_devices))
 
-def create_n_random_devices(n, base_title, power, sockets):
+def create_n_random_devices(n, base_title, power, sockets, dms):
     added_devices = 0
     id = 5000
     for socket in sockets:
@@ -84,11 +84,13 @@ def create_n_random_devices(n, base_title, power, sockets):
         device = NonSwitchableDevice("{}_{}".format(base_title, id), power, 10)
         id += 1
         socket.attach_device(device)
-        socket.start_by_user()
+        dms.add_task_to_run(TaskObject(socket, 'on', datetime.now() + timedelta(seconds=20)))
+        dms.add_task_to_run(TaskObject(socket, 'off', datetime.now() + timedelta(seconds=100)))
+
         added_devices += 1
         if added_devices >= n:
             break
-    print("Added {} non shiftable devices".format(added_devices))
+    print("Added {} random non switchable devices".format(added_devices))
 
 def init_dms():
     dms = DMS(200)
@@ -98,9 +100,10 @@ def init_dms():
     sockets = get_all_sockets(dms)
 
     create_n_thermal_devices(24, "AC", 2, sockets)
-    create_n_interruptable_devices(24, "Boiler", 2, sockets)
+    create_n_interruptable_devices(30, "Boiler", 2, sockets)
     create_n_non_switchable_devices(100, "Lamp", 0.5, sockets)
     create_n_shiftable_devices(10, "Washing machine", 2, sockets)
+    #create_n_random_devices(40, "Kettle", 5, sockets, dms)
 
     return dms
 

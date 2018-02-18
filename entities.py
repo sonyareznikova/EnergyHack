@@ -41,6 +41,7 @@ class Socket:
             self.flat.notify()
             self.added_to_queue = False
 
+
     # used by DMS
     def switch_off(self, black_out=False):
         if self.is_on:
@@ -67,7 +68,7 @@ class Socket:
         if self.potential_power > 0:
             self.potential_power = 0
             self.switch_off()
-            return TaskObject(self, 'on', datetime.now() + timedelta(self.device.off_interval)), self.device.power
+            return TaskObject(self, 'on', datetime.now() + timedelta(seconds=self.device.off_interval)), self.device.power
 
 
 # flat_id: house number (1-9) + flat number (1-99)

@@ -66,7 +66,7 @@ def create_n_shiftable_devices(n, base_title, power, sockets):
     for socket in sockets:
         if socket.device:
             continue
-        device = InterruptibleDevice("{}_{}".format(base_title, id), power)
+        device = ShiftableDevice("{}_{}".format(base_title, id), power, 20)
         id += 1
         socket.attach_device(device)
         socket.start_by_user()
@@ -75,6 +75,20 @@ def create_n_shiftable_devices(n, base_title, power, sockets):
             break
     print("Added {} non shiftable devices".format(added_devices))
 
+def create_n_random_devices(n, base_title, power, sockets):
+    added_devices = 0
+    id = 5000
+    for socket in sockets:
+        if socket.device:
+            continue
+        device = NonSwitchableDevice("{}_{}".format(base_title, id), power, 10)
+        id += 1
+        socket.attach_device(device)
+        socket.start_by_user()
+        added_devices += 1
+        if added_devices >= n:
+            break
+    print("Added {} non shiftable devices".format(added_devices))
 
 def init_dms():
     dms = DMS(200)

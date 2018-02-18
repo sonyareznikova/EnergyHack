@@ -59,7 +59,7 @@ class Socket:
             self.potential_power = 0
             return
 
-        if isinstance(self.device, InterruptibleDevice):
+        if isinstance(self.device, InterruptibleDevice) or isinstance(self.device, ThermalDevice):
             if datetime.now() - self.last_on_time >= timedelta(seconds=self.device.on_interval):
                 self.potential_power = self.current_power
 

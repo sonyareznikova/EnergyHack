@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Demand Management System</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+        <style>
+            .img-city {
+                width: 80%;
+                height: 80%;
+            }
+            .table-borderless > tbody > tr > td,
+            .table-borderless > tbody > tr > th,
+            .table-borderless > tfoot > tr > td,
+            .table-borderless > tfoot > tr > th,
+            .table-borderless > thead > tr > td,
+            .table-borderless > thead > tr > th {
+                border: none;
+            }
+            .table {
+                font-size: 16px;
+                font-family: 'Open Sans', sans-serif;
+                margin-top: 10px;
+            }
+            #myChart{
+                padding-top:20px;
+                width: 600px;
+                height: 400px;
+                /*float: none;
+                margin: 0 auto;*/
+            }
+        </style>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>-->
+        <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    </head>
+
+    <body class="container-fluid">
+
+        <!-- Header -->
+        <div class="row">
+            <div class="col-md-3" style="padding-top: 20px">
+                <img class="img-thumbnail img-city" src="../static/gorod_innopolis.jpg">
+
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td> Дома </td>
+                            <td> {{number_of_houses}}</td>
+                        </tr>
+                        <tr>
+                            <td> Квартиры </td>
+                            <td> {{number_of_flats}} </td>
+                        </tr>
+                        <tr>
+                            <td> Розеток в квартире </td>
+                            <td> {{number_of_sockets}} </td>
+                        </tr>
+                        <tr>
+                            <td> Прерываемые приборы </td>
+                            <td id="inter"> </td>
+                        </tr>
+                        <tr>
+                            <td> Термальные приборы </td>
+                            <td id="therm"> </td>
+                        </tr>
+                        <tr>
+                            <td> Откладываемые приборы </td>
+                            <td id="shift"> </td>
+                        </tr>
+                        <tr>
+                            <td> Непрерывавемые приборы </td>
+                            <td id="nonswitch"> </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <button class="btn btn-default btn-small" id="update"> Обновить </button>
+
+            </div>
+
+            <div class="col-md-9">
+                <h1> Demand Management System </h1>
+                    <!-- The Chart-->
+                    <div class="ct-chart" id="myChart"></div>
+            </div>
+        </div>
+        <!-- End of Header -->
+
+        <script>
+
+            var myChart;
+
+            var getData = $.get('/data');
+
+            getData.done(function(results) {
+                var data = {
+                    labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260],
+                    series: [
+                        results.max_power,
+                        results.results
+                    ]
+                };
+
+                var options = {
+                    high: 250,
+                    width: 800,
+                    height: 600,
+                    axisX: {
+                        offset: 60
+                    },
+                    axisY: {
+                        offset: 60
+                    }
+                };
+
+                myChart = new Chartist.Line('.ct-chart', data, options);
+            });
+
+            function updateChart() {
+                var updatedData = $.get("/data");
+
+                updatedData.done(function(results) {
+                    var data = {
+                    labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260],
+                        series: [
+                            results.max_power,
+                            results.results
+                        ]
+                    };
+
+                    myChart.update(data);
+
+                    $("#inter").html(results.inter);
+                    $("#therm").html(results.therm);
+                    $("#shift").html(results.shift);
+                    $("#nonswitch").html(results.nonswitch);
+
+                });
+            }
+
+            $("#update").on("click", updateChart);
+
+
+
+
+        </script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    </body>
+
+</html>
+
+
+
+
+
